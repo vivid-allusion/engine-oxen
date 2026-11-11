@@ -1,0 +1,20 @@
+{
+ "endpoints": {
+  "dola-seedream-5-0-pro-260628": {
+   "fail": 0,
+   "first": "2026-11-04T18:03:45Z",
+   "last": "2026-11-04T18:03:45Z",
+   "ok": 1,
+   "status": "beta"
+  },
+  "dreamina-seedance-2-5-260628": {
+   "fail": 0,
+   "first": "2026-11-04T18:03:45Z",
+   "last": "2026-11-04T18:03:45Z",
+   "ok": 1,
+   "status": "beta"
+  }
+ },
+ "generated_at": "2026-11-04T18:03:45Z",
+ "note": "evidence-based; written by engine-mgmt/tools/engine_status.py"
+}

@@ -1,0 +1,16 @@
+platform: oxen
+media_type: image
+endpoint: "flux-2-pro"
+description: "FLUX.2 [pro]"
+parameters:
+  aspect_ratio: "16:9"
+  resolution: "1 MP"
+  num_inference_steps: 30
+  guidance: 2
+  output_format: "webp"
+  output_quality: 80
+  disable_safety_checker: false
+prompt_prefix: ""
+prompt_suffix: ""
+image_url_param: input_image
+duration_param_name: duration

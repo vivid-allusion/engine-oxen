@@ -1,0 +1,3 @@
+# The skeleton has no third-party runtime dependency: submit, poll and download
+# are plain REST over urllib, so a new engine adds nothing to the fleet's
+# dependency surface. A provider whose API is a vendor SDK belongs here instead.

@@ -1,0 +1,14 @@
+platform: oxen
+media_type: image
+endpoint: "black-forest-labs-flux-2-klein-4b"
+description: "FLUX.2 Klein 4B"
+parameters:
+  aspect_ratio: "16:9"
+  output_quality: "standard"
+  output_format: "png"
+  num_inference_steps: 28
+  guidance_scale: 2.0
+prompt_prefix: ""
+prompt_suffix: ""
+image_url_param: input_image
+duration_param_name: duration

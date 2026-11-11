@@ -1,0 +1,48 @@
+id = "google-veo-3"
+label = "Veo 3.0"
+category = "VID"
+platform = "oxen"
+endpoint = "google-veo-3"
+api_path = "api/ai/queue"
+mode = "async"
+payload_style = "flat"
+description = "Veo 3.0: text- or image-to-video, 4-8 s, with audio."
+
+[pricing]
+note = "unset — read pricing from GET /api/ai/models/google-veo-3 before shipping"
+
+[general]
+kind = "video"
+prompt = "required"
+image_url_param = "input_image"
+duration_param_name = "duration"
+
+[params.generate_audio]
+label = "Generate Audio"
+type = "boolean"
+default = true
+
+[params.aspect_ratio]
+label = "Aspect Ratio"
+type = "select"
+default = "16:9"
+options = [
+  { value = "9:16", label = "9:16" },
+  { value = "16:9", label = "16:9" },
+]
+
+[params.duration]
+label = "Duration"
+type = "integer"
+default = 8
+min = 4
+max = 8
+
+[params.resolution]
+label = "Resolution"
+type = "select"
+default = "1080p"
+options = [
+  { value = "1080p", label = "1080p" },
+  { value = "720p", label = "720p" },
+]

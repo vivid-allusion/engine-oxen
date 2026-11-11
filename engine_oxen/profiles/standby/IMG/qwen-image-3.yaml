@@ -1,0 +1,15 @@
+platform: oxen
+media_type: image
+endpoint: "qwen-image-3"
+description: "Qwen Image 3.0"
+parameters:
+  aspect_ratio: "auto"
+  resolution: "2K"
+  num_images: 1
+  enable_prompt_expansion: true
+  enable_thinking: true
+  watermark: false
+prompt_prefix: ""
+prompt_suffix: ""
+image_url_param: input_image
+duration_param_name: duration

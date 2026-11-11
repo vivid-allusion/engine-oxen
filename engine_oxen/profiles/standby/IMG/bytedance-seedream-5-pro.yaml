@@ -1,0 +1,13 @@
+platform: oxen
+media_type: image
+endpoint: "bytedance-seedream-5-pro"
+description: "Seedream 5.0 Pro"
+parameters:
+  aspect_ratio: "1:1"
+  size: "2K"
+  output_format: "png"
+  watermark: false
+prompt_prefix: ""
+prompt_suffix: ""
+image_url_param: input_image
+duration_param_name: duration

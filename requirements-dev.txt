@@ -1,0 +1,5 @@
+pytest>=7.0
+PyYAML>=6.0
+# The gate. Pinned to a tag so a suite change is a deliberate version bump in
+# the engine, never a surprise on the next CI run.
+engine-conformance @ git+https://github.com/vivid-allusion/engine-conformance@v0.2.0

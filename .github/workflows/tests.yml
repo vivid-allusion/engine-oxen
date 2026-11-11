@@ -1,0 +1,29 @@
+name: tests
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+
+jobs:
+  pytest:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # 3.11 is the floor for the test tooling: the conformance suite reads
+        # TOML with tomllib. The package itself still declares >=3.10.
+        python-version: ["3.11", "3.12"]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install test dependencies
+        run: python -m pip install --upgrade pip && pip install -r requirements.txt -r requirements-dev.txt
+
+      - name: Run this engine's tests and the shared conformance suite
+        run: python -m pytest -q

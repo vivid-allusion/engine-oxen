@@ -1,0 +1,14 @@
+platform: oxen
+media_type: video
+endpoint: "wan-v2-7-text-to-video"
+description: "WAN 2.7 (text to video)"
+parameters:
+  aspect_ratio: "16:9"
+  resolution: "1080P"
+  duration: 5
+  prompt_extend: true
+  watermark: false
+prompt_prefix: ""
+prompt_suffix: ""
+image_url_param: input_image
+duration_param_name: duration

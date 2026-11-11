@@ -1,0 +1,71 @@
+id = "qwen-image-3"
+label = "Qwen Image 3.0"
+category = "IMG"
+platform = "oxen"
+endpoint = "qwen-image-3"
+api_path = "api/ai/images/generate"
+mode = "sync"
+payload_style = "flat"
+description = "Qwen Image 3.0: text-to-image and editing, with prompt expansion and thinking on by default."
+
+[pricing]
+note = "unset — read pricing from GET /api/ai/models/qwen-image-3 before shipping"
+
+[general]
+kind = "image"
+prompt = "required"
+image_url_param = "input_image"
+media_lists = ["input_image"]
+
+[params.aspect_ratio]
+label = "Aspect Ratio"
+type = "select"
+default = "auto"
+options = [
+  { value = "auto", label = "auto" },
+  { value = "16:9", label = "16:9" },
+  { value = "9:16", label = "9:16" },
+  { value = "1:1", label = "1:1" },
+  { value = "4:3", label = "4:3" },
+  { value = "3:4", label = "3:4" },
+]
+
+[params.resolution]
+label = "Resolution"
+type = "select"
+default = "2K"
+options = [
+  { value = "1K", label = "1K" },
+  { value = "2K", label = "2K" },
+]
+
+[params.num_images]
+label = "Images"
+type = "integer"
+default = 1
+min = 1
+max = 6
+note = "Only the first is returned; all are billed."
+
+[params.enable_prompt_expansion]
+label = "Prompt Expansion"
+type = "boolean"
+default = true
+
+[params.enable_thinking]
+label = "Thinking"
+type = "boolean"
+default = true
+
+[params.negative_prompt]
+label = "Negative Prompt"
+type = "text"
+
+[params.seed]
+label = "Seed"
+type = "integer"
+
+[params.watermark]
+label = "Watermark"
+type = "boolean"
+default = false

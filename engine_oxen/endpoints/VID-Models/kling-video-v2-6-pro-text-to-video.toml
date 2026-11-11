@@ -1,0 +1,49 @@
+id = "kling-video-v2-6-pro-text-to-video"
+label = "Kling 2.6 Pro (text to video)"
+category = "VID"
+platform = "oxen"
+endpoint = "kling-video-v2-6-pro-text-to-video"
+api_path = "api/ai/queue"
+mode = "async"
+payload_style = "flat"
+description = "Kling 2.6 Pro: text-to-video, 5-10 s, with audio."
+
+[pricing]
+note = "unset — read pricing from GET /api/ai/models/kling-video-v2-6-pro-text-to-video before shipping"
+
+[general]
+kind = "video"
+prompt = "required"
+image_url_param = "input_image"
+duration_param_name = "duration"
+
+[params.negative_prompt]
+label = "Negative Prompt"
+type = "text"
+
+[params.generate_audio]
+label = "Generate Audio"
+type = "boolean"
+default = true
+
+[params.aspect_ratio]
+label = "Aspect Ratio"
+type = "select"
+default = "16:9"
+options = [
+  { value = "9:16", label = "9:16" },
+  { value = "16:9", label = "16:9" },
+  { value = "1:1", label = "1:1" },
+]
+
+[params.duration]
+label = "Duration"
+type = "integer"
+default = 5
+min = 5
+max = 10
+
+[params.cfg_scale]
+label = "CFG Scale"
+type = "number"
+default = 0.5

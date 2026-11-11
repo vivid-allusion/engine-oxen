@@ -1,0 +1,79 @@
+id = "flux-2-pro"
+label = "FLUX.2 [pro]"
+category = "IMG"
+platform = "oxen"
+endpoint = "flux-2-pro"
+api_path = "api/ai/images/generate"
+mode = "sync"
+payload_style = "flat"
+description = "FLUX.2 [pro]: Black Forest Labs' production text-to-image model, up to 2 MP."
+
+[pricing]
+note = "unset — read pricing from GET /api/ai/models/flux-2-pro before shipping"
+
+[general]
+kind = "image"
+prompt = "required"
+image_url_param = "input_image"
+media_lists = ["input_image"]
+
+[params.aspect_ratio]
+label = "Aspect Ratio"
+type = "select"
+default = "16:9"
+options = [
+  { value = "1:1", label = "1:1" },
+  { value = "16:9", label = "16:9" },
+  { value = "9:16", label = "9:16" },
+  { value = "4:3", label = "4:3" },
+  { value = "3:4", label = "3:4" },
+  { value = "3:2", label = "3:2" },
+  { value = "2:3", label = "2:3" },
+  { value = "match_input_image", label = "match_input_image" },
+]
+
+[params.resolution]
+label = "Resolution"
+type = "select"
+default = "1 MP"
+options = [
+  { value = "0.5 MP", label = "0.5 MP" },
+  { value = "1 MP", label = "1 MP" },
+  { value = "2 MP", label = "2 MP" },
+]
+
+[params.num_inference_steps]
+label = "Steps"
+type = "integer"
+default = 30
+
+[params.guidance]
+label = "Guidance"
+type = "number"
+default = 2
+
+[params.output_format]
+label = "Output Format"
+type = "select"
+default = "webp"
+options = [
+  { value = "webp", label = "webp" },
+  { value = "jpg", label = "jpg" },
+  { value = "png", label = "png" },
+]
+
+[params.output_quality]
+label = "Output Quality"
+type = "integer"
+default = 80
+min = 0
+max = 100
+
+[params.disable_safety_checker]
+label = "Disable Safety Checker"
+type = "boolean"
+default = false
+
+[params.seed]
+label = "Seed"
+type = "integer"

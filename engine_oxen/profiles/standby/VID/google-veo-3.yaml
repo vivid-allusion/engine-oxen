@@ -1,0 +1,13 @@
+platform: oxen
+media_type: video
+endpoint: "google-veo-3"
+description: "Veo 3.0"
+parameters:
+  generate_audio: true
+  aspect_ratio: "16:9"
+  duration: 8
+  resolution: "1080p"
+prompt_prefix: ""
+prompt_suffix: ""
+image_url_param: input_image
+duration_param_name: duration
