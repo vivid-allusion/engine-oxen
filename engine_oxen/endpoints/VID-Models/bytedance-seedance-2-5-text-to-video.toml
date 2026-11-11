@@ -13,6 +13,7 @@ note = "unset — read pricing from GET /api/ai/models/bytedance-seedance-2-5-te
 
 [general]
 kind = "video"
+draft_mode = true
 prompt = "required"
 image_url_param = "input_image"
 duration_param_name = "duration"
