@@ -100,7 +100,8 @@ def assets_from(record: dict) -> list[dict]:
                 assets.append({"b64": str(item["b64_json"])})
             elif item.get("url"):
                 assets.append({"url": str(item["url"])})
-    if record.get("result_url"):
+    # result_url repeats videos[0].url, so it only counts when nothing else was listed.
+    if not assets and record.get("result_url"):
         assets.append({"url": str(record["result_url"])})
     return assets
 
