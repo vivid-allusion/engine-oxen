@@ -53,7 +53,7 @@ options = [
   { value = "1080p", label = "1080p" },
   { value = "4k", label = "4k" },
 ]
-note = "1080p and 4k output use 10-bit colour and H.265/HEVC encoding."
+note = "A draft preview is always 480p. A final rendered from a draft is 1080p or 4k; 1080p and 4k output use 10-bit colour and H.265/HEVC encoding."
 
 [params.output_format]
 label = "Output Format"
@@ -68,6 +68,7 @@ options = [
 label = "Draft (480p preview)"
 type = "boolean"
 default = false
+note = "Renders a 480p preview and returns a draft id valid for seven days. Finish it with draft_task_id and 1080p or 4k."
 
 [params.watermark]
 label = "Watermark"

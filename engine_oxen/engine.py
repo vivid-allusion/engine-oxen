@@ -22,7 +22,8 @@ from typing import Any
 from . import outputs, tasks, transport
 from .catalog import Catalog, EndpointSpec, load_catalog
 from .datatypes import EngineError, InputFile, OutputFile, ProgressEvent
-from .payloads import build_input, compose_prompt
+from .payloads import build_input, compose_prompt, is_unset
+from .payloads import _to_bool
 
 DEFAULT_POLL_INTERVAL = 2.0
 DEFAULT_TASK_TIMEOUT = 3600.0
@@ -105,8 +106,10 @@ class Engine:
         if index > 0 and delay > 0:
             time.sleep(delay)
 
+        finish_id = str(item.metadata.get("draft_task_id") or "")
+        draft = _to_bool(params.pop("draft", False)) is True and not finish_id
         prompt = compose_prompt(self._profile, item)
-        if spec.prompt_required and not prompt:
+        if spec.prompt_required and not prompt and not finish_id:
             self._emit(f"{prefix} Empty prompt after applying prefix/suffix", level="error")
             return [self._error(item, expected, media_type, "Empty prompt after applying prefix/suffix")]
 
@@ -115,7 +118,14 @@ class Engine:
 
         api_payload: dict | None = None
         try:
-            api_payload, warnings = build_input(self._profile, spec, params, prompt, item)
+            if finish_id:
+                api_payload, warnings = self._finish_body(params, finish_id)
+            else:
+                api_payload, warnings = build_input(self._profile, spec, params, prompt, item)
+            if draft:
+                # A draft is a fixed 480p preview; the final is where 1080p and
+                # 4k belong, and it runs from the draft's id.
+                api_payload.update(draft=True, resolution="480p")
             for warning in warnings:
                 self._emit(f"{prefix} ⚠️  {warning}", level="warning")
 
@@ -134,6 +144,15 @@ class Engine:
                 ]
             self._reset_breaker()
             metadata = {"api_payload": api_payload}
+            if draft:
+                made = int(record.get("enqueued_at") or time.time())
+                metadata["draft_task"] = {
+                    "id": str(record.get("generation_id") or ""),
+                    "created_at": made,
+                    "expires_at": made + 7 * 86400,
+                }
+            if finish_id:
+                metadata["finished_from"] = finish_id
             return [
                 OutputFile(
                     source_path=item.path,
@@ -178,6 +197,30 @@ class Engine:
             else:
                 self._reset_breaker()
             return [output]
+
+    def _finish_body(self, params: dict, finish_id: str) -> tuple[dict, list[str]]:
+        """Render the final of a draft.
+
+        Oxen reuses the draft's prompt, media and settings, so the body carries
+        the draft id and the resolution only. A final is 1080p or 4k; anything
+        else is rendered at 1080p and said out loud rather than silently.
+        """
+        warnings: list[str] = []
+        asked = str(params.get("resolution") or "").lower()
+        if asked == "4k":
+            resolution = "4k"
+        else:
+            resolution = "1080p"
+            if asked not in ("", "1080p"):
+                warnings.append(
+                    f"a draft finishes at 1080p or 4k only — rendering at 1080p "
+                    f"instead of {asked}"
+                )
+        body: dict = {"draft_task_id": finish_id, "resolution": resolution}
+        watermark = params.get("watermark")
+        if not is_unset(watermark):
+            body["watermark"] = _to_bool(watermark)
+        return body, warnings
 
     # ── provider calls ────────────────────────────────────────────────────
 

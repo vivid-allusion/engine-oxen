@@ -54,6 +54,18 @@ file and a standby profile, never a code change:
 page per model with its parameter table, so a new entry can be written and
 checked offline.
 
+## Draft mode (Seedance 2.5 only)
+
+A draft is a **fixed 480p preview** — there is no resolution choice for it. Set
+`draft = true` and the engine sends `draft: true` with `resolution: 480p`, then
+keeps the draft's generation id in the output metadata under `draft_task`
+(seven days, as Oxen documents).
+
+Render the final by giving the next input `draft_task_id` in its metadata. That
+call sends the draft id and nothing else, and the resolution is **1080p or 4k**
+only: 4k when asked for 4k, otherwise 1080p. Asking for 480p or 720p on a final
+is rendered at 1080p and said out loud in the run log, never silently.
+
 ## Resolutions
 
 `resolution` is a select wherever the model documents one. Seedance 2.5 offers
@@ -76,8 +88,5 @@ This engine's own tests, plus the shared conformance suite.
 - **Text and audio models.** There is no `messages[]` shape in this engine and
   `/api/ai/audio/generate` has no verified response envelope yet. Both are
   honest absences, not half-supported paths.
-- **Seedance draft mode.** Oxen documents `draft` and `draft_task_id` for
-  Seedance only; finishing a draft needs a second render step the engine does
-  not model yet.
 - **Async batching.** `num_generations` (1-4 per enqueue) is one job per call
   here; the engine keeps one file per input.

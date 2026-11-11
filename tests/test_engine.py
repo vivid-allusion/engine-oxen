@@ -149,3 +149,50 @@ def test_an_unknown_parameter_is_dropped_with_a_warning(tmp_path, monkeypatch):
     engine.run([an_input(tmp_path)])
     assert "not_a_param" not in client.calls[0]["payload"]
     assert any("not_a_param" in text for text in seen)
+
+
+def test_a_draft_is_always_480p(tmp_path, monkeypatch):
+    client = FakeClient([
+        {"generations": [{"generation_id": "draft-1", "status": "queued"}]},
+        {"generation_id": "draft-1", "status": "succeeded", "result_url": "https://cdn.invalid/d.mp4",
+         "enqueued_at": 1794000000},
+    ])
+    engine = make_engine(tmp_path, monkeypatch, client, endpoint=VIDEO, media_type="video",
+                         parameters={"draft": True, "resolution": "4k"})
+    item = an_input(tmp_path, prompt="a fox")
+    out = engine.run([item])[0]
+    assert out.status == "ok"
+    assert client.calls[0]["payload"]["draft"] is True
+    assert client.calls[0]["payload"]["resolution"] == "480p"
+    assert out.metadata["draft_task"] == {"id": "draft-1", "created_at": 1794000000,
+                                          "expires_at": 1794000000 + 7 * 86400}
+
+
+def test_finishing_a_draft_reuses_it_at_1080p(tmp_path, monkeypatch):
+    client = FakeClient([
+        {"generations": [{"generation_id": "final-1", "status": "queued"}]},
+        {"generation_id": "final-1", "status": "succeeded", "result_url": "https://cdn.invalid/f.mp4"},
+    ])
+    engine = make_engine(tmp_path, monkeypatch, client, endpoint=VIDEO, media_type="video",
+                         parameters={"resolution": "720p"})
+    item = an_input(tmp_path, prompt="")
+    item.metadata["draft_task_id"] = "draft-1"
+    out = engine.run([item])[0]
+    assert out.status == "ok"
+    assert client.calls[0]["payload"] == {"model": VIDEO, "draft_task_id": "draft-1",
+                                          "resolution": "1080p"}
+    assert out.metadata["finished_from"] == "draft-1"
+
+
+def test_finishing_a_draft_at_4k_is_honoured(tmp_path, monkeypatch):
+    client = FakeClient([
+        {"generations": [{"generation_id": "final-2", "status": "queued"}]},
+        {"generation_id": "final-2", "status": "succeeded", "result_url": "https://cdn.invalid/f.mp4"},
+    ])
+    engine = make_engine(tmp_path, monkeypatch, client, endpoint=VIDEO, media_type="video",
+                         parameters={"resolution": "4k", "watermark": False})
+    item = an_input(tmp_path, prompt="")
+    item.metadata["draft_task_id"] = "draft-1"
+    engine.run([item])
+    assert client.calls[0]["payload"] == {
+        "model": VIDEO, "draft_task_id": "draft-1", "resolution": "4k", "watermark": False}
