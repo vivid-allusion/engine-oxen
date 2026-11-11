@@ -120,7 +120,7 @@ class Engine:
         api_payload: dict | None = None
         try:
             if finish_id:
-                api_payload, warnings = self._finish_body(params, finish_id)
+                api_payload, warnings = self._finish_body(params, finish_id, item.metadata)
             else:
                 api_payload, warnings = build_input(self._profile, spec, params, prompt, item)
             if draft:
@@ -200,11 +200,12 @@ class Engine:
                 self._reset_breaker()
             return [output]
 
-    def _finish_body(self, params: dict, finish_id: str) -> tuple[dict, list[str]]:
+    def _finish_body(self, params: dict, finish_id: str, item_meta: dict) -> tuple[dict, list[str]]:
         """Render the final of a draft.
 
         Oxen reuses the draft's prompt, media and settings, so the body carries
-        the draft id and the resolution only. A final is 1080p or 4k; anything
+        the draft id, the resolution and the draft's duration (Oxen holds back the
+        price of the longest clip without it; it does not change the render). A final is 1080p or 4k; anything
         else is rendered at 1080p and said out loud rather than silently.
         """
         warnings: list[str] = []
@@ -219,6 +220,11 @@ class Engine:
                     f"instead of {asked}"
                 )
         body: dict = {"draft_task_id": finish_id, "resolution": resolution}
+        duration = item_meta.get("draft_duration")
+        if is_unset(duration):
+            duration = params.get("duration")
+        if not is_unset(duration):
+            body["duration"] = int(duration)
         watermark = params.get("watermark")
         if not is_unset(watermark):
             body["watermark"] = _to_bool(watermark)

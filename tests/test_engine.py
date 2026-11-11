@@ -197,3 +197,28 @@ def test_finishing_a_draft_at_4k_is_honoured(tmp_path, monkeypatch):
     engine.run([item])
     assert client.calls[0]["payload"] == {
         "model": VIDEO, "draft_task_id": "draft-1", "resolution": "4k", "watermark": False}
+
+
+def _finish_payload(tmp_path, monkeypatch, parameters, meta):
+    client = FakeClient([
+        {"generations": [{"generation_id": "final-3", "status": "queued"}]},
+        {"generation_id": "final-3", "status": "succeeded", "result_url": "https://cdn.invalid/f.mp4"},
+    ])
+    engine = make_engine(tmp_path, monkeypatch, client, endpoint=VIDEO, media_type="video",
+                         parameters=parameters)
+    item = an_input(tmp_path, prompt="")
+    item.metadata.update(meta)
+    engine.run([item])
+    return client.calls[0]["payload"]
+
+
+def test_finish_sends_the_drafts_duration(tmp_path, monkeypatch):
+    payload = _finish_payload(tmp_path, monkeypatch, {"resolution": "1080p", "duration": 10},
+                              {"draft_task_id": "draft-1", "draft_duration": 4})
+    assert payload["duration"] == 4
+
+
+def test_finish_falls_back_to_the_profile_duration(tmp_path, monkeypatch):
+    payload = _finish_payload(tmp_path, monkeypatch, {"resolution": "1080p", "duration": 6},
+                              {"draft_task_id": "draft-1"})
+    assert payload["duration"] == 6
