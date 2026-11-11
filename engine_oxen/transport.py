@@ -22,7 +22,7 @@ DEFAULT_BASE_URL = "https://hub.oxen.ai"
 DEFAULT_TIMEOUT = 600.0
 DOWNLOAD_TIMEOUT = 300.0
 RETRY_AFTER_CAP = 300.0
-USER_AGENT = "engine-oxen/0.1"
+USER_AGENT = "helmer-engine/0.1"
 
 _MAX_ERROR_CHARS = 600
 
