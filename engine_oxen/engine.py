@@ -15,6 +15,7 @@ import base64
 import os
 import threading
 import time
+from datetime import datetime
 from collections.abc import Callable
 from pathlib import Path
 from typing import Any
@@ -145,11 +146,12 @@ class Engine:
             self._reset_breaker()
             metadata = {"api_payload": api_payload}
             if draft:
-                made = int(record.get("enqueued_at") or time.time())
+                video = (record.get("videos") or [{}])[0]
+                expires = datetime.fromisoformat(str(video["draft_expires_at"]).replace("Z", "+00:00"))
                 metadata["draft_task"] = {
-                    "id": str(record.get("generation_id") or ""),
-                    "created_at": made,
-                    "expires_at": made + 7 * 86400,
+                    "id": str(video["draft_task_id"]),
+                    "created_at": int(record.get("enqueued_at") or time.time()),
+                    "expires_at": int(expires.timestamp()),
                 }
             if finish_id:
                 metadata["finished_from"] = finish_id

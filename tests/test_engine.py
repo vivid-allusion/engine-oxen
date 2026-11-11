@@ -155,7 +155,8 @@ def test_a_draft_is_always_480p(tmp_path, monkeypatch):
     client = FakeClient([
         {"generations": [{"generation_id": "draft-1", "status": "queued"}]},
         {"generation_id": "draft-1", "status": "succeeded", "result_url": "https://cdn.invalid/d.mp4",
-         "enqueued_at": 1794000000},
+         "enqueued_at": 1794000000,
+         "videos": [{"draft_task_id": "cgt-1", "draft_expires_at": "2026-11-18T14:07:11Z"}]},
     ])
     engine = make_engine(tmp_path, monkeypatch, client, endpoint=VIDEO, media_type="video",
                          parameters={"draft": True, "resolution": "4k"})
@@ -164,8 +165,8 @@ def test_a_draft_is_always_480p(tmp_path, monkeypatch):
     assert out.status == "ok"
     assert client.calls[0]["payload"]["draft"] is True
     assert client.calls[0]["payload"]["resolution"] == "480p"
-    assert out.metadata["draft_task"] == {"id": "draft-1", "created_at": 1794000000,
-                                          "expires_at": 1794000000 + 7 * 86400}
+    assert out.metadata["draft_task"] == {"id": "cgt-1", "created_at": 1794000000,
+                                          "expires_at": 1795010831}
 
 
 def test_finishing_a_draft_reuses_it_at_1080p(tmp_path, monkeypatch):
