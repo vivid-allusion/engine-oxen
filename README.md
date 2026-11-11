@@ -58,8 +58,8 @@ checked offline.
 
 A draft is a **fixed 480p preview** — there is no resolution choice for it. Set
 `draft = true` and the engine sends `draft: true` with `resolution: 480p`, then
-keeps the draft's generation id in the output metadata under `draft_task`
-(seven days, as Oxen documents).
+keeps the draft's id (Oxen's `videos[0].draft_task_id`) in the output metadata
+under `draft_task`, with the expiry taken from `videos[0].draft_expires_at`.
 
 Render the final by giving the next input `draft_task_id` in its metadata. That
 call sends the draft id and nothing else, and the resolution is **1080p or 4k**
