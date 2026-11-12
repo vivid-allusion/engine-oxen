@@ -12,5 +12,4 @@ parameters:
   watermark: false
 prompt_prefix: ""
 prompt_suffix: ""
-image_url_param: input_image
 duration_param_name: duration

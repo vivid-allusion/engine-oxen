@@ -1,0 +1,75 @@
+id = "bytedance-seedance-2-5-image-to-video"
+label = "Seedance 2.5 (image to video)"
+category = "VID"
+platform = "oxen"
+endpoint = "bytedance-seedance-2-5-image-to-video"
+api_path = "api/ai/queue"
+mode = "async"
+payload_style = "flat"
+description = "Seedance 2.5: animate a start frame, with an optional end frame and synchronised audio, 4-30 s, up to 4k."
+
+[pricing]
+note = "unset — read pricing from GET /api/ai/models/bytedance-seedance-2-5-image-to-video before shipping"
+
+[general]
+kind = "video"
+draft_mode = true
+prompt = "required"
+image_url_param = "input_image"
+slots = ["tail_image_url"]
+required_slots = ["input_image"]
+duration_param_name = "duration"
+
+[params.input_image_has_face]
+label = "Start frame has a face"
+type = "boolean"
+default = false
+
+[params.tail_image_url_has_face]
+label = "End frame has a face"
+type = "boolean"
+default = false
+
+[params.generate_audio]
+label = "Generate Audio"
+type = "boolean"
+default = true
+
+[params.duration]
+label = "Duration"
+type = "integer"
+default = 5
+min = 4
+max = 30
+
+[params.resolution]
+label = "Resolution"
+type = "select"
+default = "720p"
+options = [
+  { value = "480p", label = "480p" },
+  { value = "720p", label = "720p" },
+  { value = "1080p", label = "1080p" },
+  { value = "4k", label = "4k" },
+]
+note = "A draft preview is always 480p. A final rendered from a draft is 1080p or 4k; 1080p and 4k output use 10-bit colour and H.265/HEVC encoding."
+
+[params.output_format]
+label = "Output Format"
+type = "select"
+default = "mp4"
+options = [
+  { value = "mp4", label = "mp4" },
+  { value = "mov", label = "mov" },
+]
+
+[params.draft]
+label = "Draft (480p preview)"
+type = "boolean"
+default = false
+note = "Renders a 480p preview and returns a draft id valid for seven days. Finish it with draft_task_id and 1080p or 4k."
+
+[params.watermark]
+label = "Watermark"
+type = "boolean"
+default = false

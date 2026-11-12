@@ -15,7 +15,7 @@ note = "unset — read pricing from GET /api/ai/models/bytedance-seedance-2-5-te
 kind = "video"
 draft_mode = true
 prompt = "required"
-image_url_param = "input_image"
+media_hint = "Seedance 2.5 (text to video) takes no media - use Seedance 2.5 (image to video) to animate an image."
 duration_param_name = "duration"
 
 [params.generate_audio]

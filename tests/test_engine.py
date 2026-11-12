@@ -222,3 +222,35 @@ def test_finish_falls_back_to_the_profile_duration(tmp_path, monkeypatch):
     payload = _finish_payload(tmp_path, monkeypatch, {"resolution": "1080p", "duration": 6},
                               {"draft_task_id": "draft-1"})
     assert payload["duration"] == 6
+
+
+
+
+def _body(tmp_path, monkeypatch, mode, urls):
+    client = FakeClient([
+        {"generations": [{"generation_id": "gen-1", "status": "queued"}]},
+        {"generation_id": "gen-1", "status": "succeeded", "result_url": "https://cdn.invalid/out.mp4"},
+    ])
+    engine = make_engine(tmp_path, monkeypatch, client, endpoint=f"bytedance-seedance-2-5-{mode}-to-video",
+                         media_type="video", parameters={"draft": True})
+    item = an_input(tmp_path, prompt="a fox")
+    item.reference_urls = urls
+    return client.calls, engine.run([item])
+
+
+def test_image_to_video_routes_start_and_end_frames(tmp_path, monkeypatch):
+    calls, _ = _body(tmp_path, monkeypatch, "image", ["http://x/a.png", "http://x/b.jpg"])
+    body = calls[0]["payload"]
+    assert body["input_image"] == "http://x/a.png" and body["tail_image_url"] == "http://x/b.jpg"
+
+
+def test_reference_to_video_routes_by_file_type(tmp_path, monkeypatch):
+    calls, _ = _body(tmp_path, monkeypatch, "reference", ["http://x/a.png", "http://x/w.mp4", "http://x/r.mp3"])
+    body = calls[0]["payload"]
+    assert body["input_images"] == ["http://x/a.png"]
+    assert body["input_videos"] == ["http://x/w.mp4"] and body["input_audios"] == ["http://x/r.mp3"]
+
+
+def test_text_to_video_refuses_media_and_names_image_to_video(tmp_path, monkeypatch):
+    calls, out = _body(tmp_path, monkeypatch, "text", ["http://x/a.png"])
+    assert not calls and "image to video" in out[0].error_msg

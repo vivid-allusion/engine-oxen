@@ -98,6 +98,7 @@ class EndpointSpec:
     duration_param_name: str = "duration_seconds"
     prompt_mode: str = "required"
     draft_mode: bool = False
+    media_hint: str = ""
     known: bool = True
     params: dict = field(default_factory=dict)
     status: str = "experimental"
@@ -259,5 +260,6 @@ def _read_spec(path: Path, category: str) -> EndpointSpec | None:
         duration_param_name=str(general.get("duration_param_name") or "duration_seconds"),
         prompt_mode=str(general.get("prompt") or "required"),
         draft_mode=bool(general.get("draft_mode", False)),
+        media_hint=str(general.get("media_hint") or ""),
         params=params,
     )

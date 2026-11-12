@@ -1,0 +1,15 @@
+platform: oxen
+media_type: video
+endpoint: "bytedance-seedance-2-5-reference-to-video"
+description: "Seedance 2.5 (reference to video)"
+parameters:
+  generate_audio: true
+  aspect_ratio: "16:9"
+  duration: 5
+  resolution: "720p"
+  output_format: "mp4"
+  draft: false
+  watermark: false
+prompt_prefix: ""
+prompt_suffix: ""
+duration_param_name: duration

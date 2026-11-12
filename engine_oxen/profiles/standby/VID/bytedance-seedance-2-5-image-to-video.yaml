@@ -1,0 +1,14 @@
+platform: oxen
+media_type: video
+endpoint: "bytedance-seedance-2-5-image-to-video"
+description: "Seedance 2.5 (image to video)"
+parameters:
+  generate_audio: true
+  duration: 5
+  resolution: "720p"
+  output_format: "mp4"
+  draft: false
+  watermark: false
+prompt_prefix: ""
+prompt_suffix: ""
+duration_param_name: duration

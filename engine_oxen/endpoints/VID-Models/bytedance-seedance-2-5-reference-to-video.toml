@@ -1,0 +1,113 @@
+id = "bytedance-seedance-2-5-reference-to-video"
+label = "Seedance 2.5 (reference to video)"
+category = "VID"
+platform = "oxen"
+endpoint = "bytedance-seedance-2-5-reference-to-video"
+api_path = "api/ai/queue"
+mode = "async"
+payload_style = "flat"
+description = "Seedance 2.5: video guided by reference images, clips and sounds, with synchronised audio, 4-30 s, up to 4k."
+
+[pricing]
+note = "unset — read pricing from GET /api/ai/models/bytedance-seedance-2-5-reference-to-video before shipping"
+
+[general]
+kind = "video"
+draft_mode = true
+prompt = "required"
+slots = ["input_images", "input_videos", "input_audios", "input_face_images", "input_face_videos"]
+media_lists = ["input_images", "input_videos", "input_audios", "input_face_images", "input_face_videos"]
+duration_param_name = "duration"
+
+[params.input_images]
+label = "Reference images"
+type = "text"
+list = true
+
+[params.input_videos]
+label = "Reference videos"
+type = "text"
+list = true
+
+[params.input_audios]
+label = "Reference audios"
+type = "text"
+list = true
+
+[params.input_face_images]
+label = "Reference face images"
+type = "text"
+list = true
+
+[params.input_face_videos]
+label = "Reference face videos"
+type = "text"
+list = true
+
+[params.omni_reference_task_type]
+label = "Reference task"
+type = "select"
+default = "auto"
+options = [
+  { value = "auto", label = "auto" },
+  { value = "edit", label = "edit" },
+  { value = "extend", label = "extend" },
+]
+
+[params.aspect_ratio]
+label = "Aspect Ratio"
+type = "select"
+default = "16:9"
+options = [
+  { value = "adaptive", label = "adaptive" },
+  { value = "21:9", label = "21:9" },
+  { value = "16:9", label = "16:9" },
+  { value = "4:3", label = "4:3" },
+  { value = "1:1", label = "1:1" },
+  { value = "3:4", label = "3:4" },
+  { value = "9:16", label = "9:16" },
+]
+
+[params.generate_audio]
+label = "Generate Audio"
+type = "boolean"
+default = true
+
+[params.duration]
+label = "Duration"
+type = "integer"
+default = 5
+min = 4
+max = 30
+
+[params.resolution]
+label = "Resolution"
+type = "select"
+default = "720p"
+options = [
+  { value = "480p", label = "480p" },
+  { value = "720p", label = "720p" },
+  { value = "1080p", label = "1080p" },
+  { value = "4k", label = "4k" },
+]
+note = "A draft preview is always 480p. A final rendered from a draft is 1080p or 4k; 1080p and 4k output use 10-bit colour and H.265/HEVC encoding."
+
+[params.output_format]
+label = "Output Format"
+type = "select"
+default = "mp4"
+options = [
+  { value = "mp4", label = "mp4" },
+  { value = "mov", label = "mov" },
+]
+
+[params.draft]
+label = "Draft (480p preview)"
+type = "boolean"
+default = false
+note = "Renders a 480p preview and returns a draft id valid for seven days. Finish it with draft_task_id and 1080p or 4k."
+
+[params.watermark]
+label = "Watermark"
+type = "boolean"
+default = false

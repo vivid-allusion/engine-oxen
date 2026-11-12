@@ -24,6 +24,8 @@ from .datatypes import EngineError, InputFile
 
 _TRUE = {"true", "yes", "1", "on"}
 _FALSE = {"false", "no", "0", "off"}
+_VIDEO = {"mp4", "mov", "webm", "m4v"}
+_AUDIO = {"mp3", "wav", "m4a", "aac", "ogg", "flac"}
 
 
 def compose_prompt(profile: dict, item: InputFile) -> str:
@@ -118,14 +120,15 @@ def encode_param(key: str, value: Any, spec: EndpointSpec) -> Any:
 def _add_media(payload: dict, profile: dict, spec: EndpointSpec, item: InputFile) -> None:
     declared = declared_media_key(profile, spec)
     if item.reference_urls:
-        if spec.known and not declared:
+        if spec.known and not declared and not spec.media_lists:
             raise EngineError(
                 f"{spec.model} takes no media input, but {item.path.name} carries "
                 f"{len(item.reference_urls)} URL(s) — use a model that edits, "
                 f"animates or continues them, or move them to that model's profile."
+                + (f" {spec.media_hint}" if spec.media_hint else "")
             )
-        key = declared or primary_key(profile, spec)
-        payload[key] = shape_media(key, item.reference_urls, spec)
+        for key, urls in _route(declared or primary_key(profile, spec), item, spec).items():
+            payload[key] = shape_media(key, urls, spec)
 
     for slot, urls in (item.references or {}).items():
         if urls:
@@ -137,6 +140,23 @@ def _add_media(payload: dict, profile: dict, spec: EndpointSpec, item: InputFile
                 f"{spec.model} requires the '{slot}' input, but {item.path.name} "
                 f"does not provide it"
             )
+
+
+def _route(key: str, item: InputFile, spec: EndpointSpec) -> dict[str, list[str]]:
+    """Which media key each link goes to, when the model has more than one."""
+    urls = list(item.reference_urls)
+    if spec.media_lists and len(spec.slots) > 1:  # by file type
+        routed: dict[str, list[str]] = {}
+        for url in urls:
+            ext = url.split("?")[0].rsplit(".", 1)[-1].lower()
+            slot = "input_videos" if ext in _VIDEO else "input_audios" if ext in _AUDIO else "input_images"
+            routed.setdefault(slot, []).append(url)
+        return routed
+    if spec.slots and key == spec.image_url_param:  # start frame, then end frame
+        if len(urls) > 1 + len(spec.slots):
+            raise EngineError(f"{spec.model} takes a start and an end image; got {len(urls)} links")
+        return dict(zip([key, *spec.slots], ([u] for u in urls)))
+    return {key: urls}
 
 
 def _add_duration(
